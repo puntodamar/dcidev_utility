@@ -168,6 +168,11 @@ module DcidevUtility
       base64.split(";").first.split(":").last
     end
 
+    def string_masking(string, length = 9)
+      return "" if string.nil?
+      return string.sub(string[0...length], 'x' * length)
+    end
+
     def response_simplifier(response)
       if response.class == String
         return JSON.parse response
