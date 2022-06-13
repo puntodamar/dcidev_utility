@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
     s.name = "dcidev_utility"
-    s.version = "0.0.2"
+    s.version = "0.0.3"
     # s.date = ""
     s.summary = "Commonly used methods used in DCI"
     s.description = "Testing phase"

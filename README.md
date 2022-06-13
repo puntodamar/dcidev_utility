@@ -49,4 +49,7 @@ DcidevUtility.base64_extension(base64)
 DcidevUtility.string_masking(string, length = 9)
 
 DcidevUtility.response_simplifier(response)
+
+# takeout base64 string from json hash
+DcidevUtility.json_simplifier(json)
 ```

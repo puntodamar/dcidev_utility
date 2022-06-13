@@ -200,5 +200,30 @@ module DcidevUtility
         def email_valid?(email)
           email.to_s.match(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).present?
         end
+
+        def json_simplifier(json)
+            simplified = {}
+            json.each do |k, value|
+                if value.is_a?(Array)
+                    simplified[k] = []
+                    value.each_with_index do |array_value, index_array|
+                        simplified[k][index_array] = json_simplifier(array_value)
+                    end
+                end
+                if value.is_a?(String) && value.include?(';base64,')
+                    begin
+                        Base64.strict_decode64(value)
+                        value = "base64_#{k.to_s}"
+                    rescue => _
+                        value = 'invalid base64'
+                    ensure
+                        simplified[k] = value
+                    end
+                else
+                    simplified[k] = value
+                end
+            end
+            return simplified
+        end
     end
 end
