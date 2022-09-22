@@ -52,4 +52,11 @@ DcidevUtility.response_simplifier(response)
 
 # takeout base64 string from json hash
 DcidevUtility.json_simplifier(json)
+
+# get difference in seconds
+DcidevUtility.seconds_diff(start, finish)
+
+# get difference in years
+DcidevUtility.years_between(date_from, date_to)
+
 ```

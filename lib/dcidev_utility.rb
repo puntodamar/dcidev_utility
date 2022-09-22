@@ -17,18 +17,14 @@ module DcidevUtility
         end
 
         def download_to_file(url)
-            begin
-                uri = URI::parse(url)
-                extension = File.extname(uri.path)
-                stream = URI::open(url, "rb")
-                Tempfile.new([File.basename(uri.path), extension]).tap do |file|
-                    file.binmode
-                    IO.copy_stream(stream, file)
-                    stream.close
-                    file.rewind
-                end
-            rescue => e
-                return nil
+            uri = URI::parse(url)
+            extension = File.extname(uri.path)
+            stream = URI::open(url, "rb")
+            Tempfile.new([File.basename(uri.path), extension]).tap do |file|
+                file.binmode
+                IO.copy_stream(stream, file)
+                stream.close
+                file.rewind
             end
         end
 
@@ -166,14 +162,29 @@ module DcidevUtility
             base64.split(";").first.split(":").last
         end
 
-        def string_masking(string, length = 9)
+        def string_masking(string, length = 9, replace_charcter: 'x')
             return "" if string.nil?
-            return string.sub(string[0...length], 'x' * length)
+            return string.sub(string[0...length], replace_charcter * length)
+        end
+
+        def random_string_masking(string, length = 0, replace_character: '*')
+            return "" if string.nil?
+            length.clamp(0, string.length).times do
+                random_pos = nil
+                loop do
+                    random_pos = rand(0...string.length)
+                    if string[random_pos] != replace_character
+                        break
+                    end
+                end
+                string[random_pos] = replace_character
+            end
+            return string
         end
 
         def response_simplifier(response)
             if response.class == String
-                return JSON.parse response
+                return response_simplifier(JSON.parse(response))
             end
             return response if response.class == Hash
             return response if response.nil?
@@ -194,7 +205,7 @@ module DcidevUtility
                 }.to_json
             end
 
-            simple_response
+            json_simplifier(simple_response)
         end
 
         def email_valid?(email)
@@ -224,6 +235,14 @@ module DcidevUtility
                 end
             end
             return simplified
+        end
+
+        def seconds_diff(start, finish)
+            (start - finish).seconds.round
+        end
+
+        def years_between(date_from, date_to)
+            (date_from.year - date_to.year).abs
         end
     end
 end
