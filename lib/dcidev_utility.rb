@@ -244,5 +244,13 @@ module DcidevUtility
         def years_between(date_from, date_to)
             (date_from.year - date_to.year).abs
         end
+
+        # sample usage with rails: Model.where("#{Utility.date_builder("created_at")} BETWEEN ? AND ?", start_date, end_date.to_datetime.end_of_day)
+        def tz_date_builder(field)
+            if ActiveRecord::Base.connection.instance_values["config"][:adapter] == "mysql2"
+              return "CONVERT_TZ(#{field},'+00:00','#{Time.zone.now.formatted_offset}')"
+            end
+            "DATE(#{field}::TIMESTAMPTZ AT TIME ZONE '#{Time.zone.now.formatted_offset}'::INTERVAL)"
+        end
     end
 end
